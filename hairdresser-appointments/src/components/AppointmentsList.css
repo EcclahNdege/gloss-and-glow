@@ -1,0 +1,27 @@
+.appointments-container {
+    padding: 20px;
+  }
+  
+  .appointments-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .appointment-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .appointment-item.pending {
+    background-color: #fff3cd;
+  }
+  
+  .appointment-item.accepted {
+    background-color: #d4edda;
+  }
+  
+  .appointment-item.rejected {
+    background-color: #f8d7da;
+  }
+  
