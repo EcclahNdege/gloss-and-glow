@@ -4,13 +4,14 @@ import Header from './components/Header';
 import Services from './components/Services';
 import AppointmentForm from './components/AppointmentForm';
 import AppointmentsList from './components/AppointmentsList';
+import Signup from './components/SignupForm';
 import Login from './components/Login';
-import Dashboard from './components/Dashboard'; // New Dashboard component
-import ServiceDetails from './components/ServiceDetails'; // New service details component
+import Dashboard from './components/Dashboard';
+import ServiceDetails from './components/ServiceDetails';
 import './App.css';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Manage login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <Router>
@@ -19,9 +20,11 @@ function App() {
         <Routes>
           <Route path="/services" element={<Services />} />
           <Route path="/appointments" element={<AppointmentsList />} />
+          <Route path="/appointment" element={<AppointmentForm />} />
+          <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/" element={<Dashboard isLoggedIn={isLoggedIn} />} />
-          <Route path="/services/:id" element={<ServiceDetails />} /> {/* New route */}
+          <Route path="/services/:id" element={<ServiceDetails />} />
         </Routes>
       </div>
     </Router>

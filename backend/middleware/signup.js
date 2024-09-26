@@ -6,13 +6,13 @@ module.exports = async (req, res, next) => {
     if (!username || !phone || !password) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
-    let dbUser = await User.findOne({ username });
+    let dbUser = await User.findOne({ username  : username });
 
     if (dbUser) {
         return res.status(400).json({ message: 'Username already exists' });
     }
 
-    dbUser = await User.findOne({ phone });
+    dbUser = await User.findOne({ phone : phone });
 
     if (dbUser) {
         return res.status(400).json({ message: 'Phone number already exists' });
@@ -25,6 +25,6 @@ module.exports = async (req, res, next) => {
 
     await newUser.save();
 
-    res.status(201).json({ message: 'User created' });
+    next();
 
 }

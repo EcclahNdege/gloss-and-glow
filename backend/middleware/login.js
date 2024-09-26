@@ -1,7 +1,6 @@
 const User = require('../schemas/user.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
 
 module.exports = async (req, res, next) => {
     const { username, password } = req.body;

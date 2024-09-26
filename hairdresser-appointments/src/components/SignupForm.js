@@ -1,15 +1,16 @@
-// src/components/SignupForm.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const SignupForm = () => {
+const SignupForm = ({ setIsLoggedIn }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    username: '',
+    phone: '',
     password: '',
     confirmPassword: '',
   });
 
-  const { name, email, password, confirmPassword } = formData;
+  const { username, phone, password, confirmPassword } = formData;
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -18,15 +19,48 @@ const SignupForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform form validation here (password match, email format, etc.)
+
+    // Basic form validation
     if (password !== confirmPassword) {
       alert('Passwords do not match');
       return;
     }
-    // Submit the form (e.g., make an API call to your backend)
-    console.log('User data submitted:', formData);
+
+    // Construct the payload for backend
+    const payload = {
+      username,
+      phone,
+      password,
+    };
+
+    try {
+      const response = await fetch('http://localhost:8000/api/account/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message}`);
+      } else {
+        const data = await response.json();
+        console.log('User signed up successfully:', data);
+
+        // Update isLoggedIn state
+        setIsLoggedIn(true);
+
+        // Navigate to home page
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error during signup:', error);
+      alert('Signup failed, please try again.');
+    }
   };
 
   return (
@@ -34,21 +68,21 @@ const SignupForm = () => {
       <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Name:</label>
+          <label>Username:</label>
           <input
             type="text"
-            name="name"
-            value={name}
+            name="username"
+            value={username}
             onChange={handleChange}
             required
           />
         </div>
         <div>
-          <label>Email:</label>
+          <label>Phone:</label>
           <input
-            type="email"
-            name="email"
-            value={email}
+            type="text"
+            name="phone"
+            value={phone}
             onChange={handleChange}
             required
           />
