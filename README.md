@@ -1,7 +1,5 @@
 ### API Documentation
 
-#### Base URL: `/api`
-
 ---
 
 #### **1. User Authentication**
@@ -12,10 +10,8 @@
 - **Request Body**:
   ```json
   {
-    "name": "string",
     "email": "string",
     "password": "string",
-    "role": "string" // either 'client' or 'hairdresser'
   }
   ```
 - **Response**:
@@ -44,7 +40,7 @@
   - `401 Unauthorized`: No valid JWT token.
 
 ##### **1.4 Logout User**
-- **Endpoint**: `POST /auth/logout`
+- **Endpoint**: `GET /auth/logout`
 - **Description**: Log out the user (clear JWT token).
 - **Response**:
   - `200 OK`: Successfully logged out.
@@ -54,7 +50,7 @@
 #### **2. Hairdresser Services**
 
 ##### **2.1 Create Service**
-- **Endpoint**: `POST /services`
+- **Endpoint**: `POST me/services`
 - **Description**: Hairdresser can add a new service.
 - **Request Body**:
   ```json
@@ -62,17 +58,24 @@
     "name": "string",
     "description": "string",
     "price": "number"
+    "image": "file" //Should be a 1:1 aspect ratio image, less than 10 mbs
   }
   ```
 - **Response**:
   - `201 Created`: Service created successfully.
-  - `403 Forbidden`: Only hairdressers can create services.
+  - `403 Forbidden`: User is not authenticated, or verified
 
 ##### **2.2 Get All Services**
 - **Endpoint**: `GET /services`
-- **Description**: Get a list of all services.
+- **Description**: Get a list of services. Is paginated
 - **Response**:
-  - `200 OK`: List of services.
+  - `200 OK`: List of services, 10 at a time.
+
+##### **2.2 Get User Services**
+- **Endpoint**: `GET me/services`
+- **Description**: Get a list of personal services. Is paginated
+- **Response**:
+  - `200 OK`: List of services belonging to logged in user, 10 at a time.
 
 ---
 
@@ -86,6 +89,7 @@
   {
     "serviceId": "string",
     "hairdresserId": "string",
+    "clientId": "string",
     "preferredTime": "string"
   }
   ```
@@ -93,39 +97,39 @@
   - `201 Created`: Appointment request sent.
   - `400 Bad Request`: Invalid data.
 
-##### **3.2 View Appointments (Hairdresser)**
-- **Endpoint**: `GET /appointments/hairdresser`
-- **Description**: Hairdresser views all appointment requests.
+##### **3.2 View Appointments**
+- **Endpoint**: `GET me/appointments/`
+- **Description**: View all appointment requests.
 - **Response**:
   - `200 OK`: List of appointment requests.
-  - `403 Forbidden`: Only hairdressers can view this data.
+  - `403 Forbidden`: Something went wrong with validation.
 
 ##### **3.3 Accept/Reject Appointment**
-- **Endpoint**: `PATCH /appointments/:appointmentId`
+- **Endpoint**: `PATCH me/appointments/:appointmentId`
 - **Description**: Hairdresser accepts or rejects an appointment.
 - **Request Body**:
   ```json
   {
     "status": "accepted" | "rejected",
-    "scheduledTime": "string" // Optional, set if accepted
+    "preferredTime": "string"
   }
   ```
 - **Response**:
   - `200 OK`: Appointment updated.
-  - `403 Forbidden`: Only hairdressers can perform this action.
+  - `403 Forbidden`: Error with authorization
 
 ##### **3.4 Reschedule Appointment (Client)**
-- **Endpoint**: `PATCH /appointments/:appointmentId/reschedule`
-- **Description**: Client requests to reschedule the appointment.
+- **Endpoint**: `PATCH me/appointments/:appointmentId/reschedule`
+- **Description**: Requests to reschedule the appointment.
 - **Request Body**:
   ```json
   {
-    "newTime": "string"
+    "preferredTime": "string"
   }
   ```
 - **Response**:
   - `200 OK`: Appointment rescheduled.
-  - `403 Forbidden`: Only clients can perform this action.
+  - `403 Forbidden`: Authorizaton error
 
 ##### **3.5 Cancel Appointment (Both)**
 - **Endpoint**: `DELETE /appointments/:appointmentId`
@@ -150,7 +154,7 @@
 #### **5. User Profile**
 
 ##### **5.1 Get Profile**
-- **Endpoint**: `GET /users/:userId`
+- **Endpoint**: `GET /me/profile`
 - **Description**: Retrieve user profile (both client and hairdresser).
 - **Response**:
   - `200 OK`: User profile data.
